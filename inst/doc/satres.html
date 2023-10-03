@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Jose Samos (jsamos@ugr.es)" />
+
+<meta name="date" content="2023-09-29" />
+
+<title>Grouping satellite bands by spectral and spatial resolution</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Grouping satellite bands by spectral and
+spatial resolution</h1>
+<h4 class="author">Jose Samos (<a href="mailto:jsamos@ugr.es" class="email">jsamos@ugr.es</a>)</h4>
+<h4 class="date">2023-09-29</h4>
+
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>We frequently download files with satellite bands from the <a href="https://dataspace.copernicus.eu/"><em>ESA</em></a> and <a href="https://glovis.usgs.gov/"><em>USGS</em></a> websites to perform
+data analysis, transform them or store them in DBMS. They are downloaded
+as files in ZIP or TAR format. In some cases, it is necessary to
+download several files that cover the study area, so the first operation
+to perform is to merge the bands. To access the bands we have to
+explicitly indicate the name and location of their files.</p>
+<p>The goal of <code>satres</code> (<em>sat</em>ellite spectral and
+spatial <em>res</em>olution) is to facilitate these operations by at
+least partially automating them. It includes a function that makes it
+easier to decompress files, useful when downloading many files. To treat
+them together, it is enough to indicate the folder that contains the
+decompressed files: Satellite bands are automatically obtained by name
+(spectral) and spatial resolution; if we have several files to cover a
+geographical area, the corresponding bands are automatically merged. The
+result can be stored on disk and can also be obtained as objects of
+class <code>SpatRaster</code>, from package <a href="https://CRAN.R-project.org/package=terra"><code>terra</code></a>.</p>
+<p>The following is an illustrative example of how the package works, to
+show usage of features it offers. Finally, the document ends with
+conclusions.</p>
+</div>
+<div id="an-illustrative-example" class="section level1">
+<h1>An illustrative example</h1>
+<p>In this section an illustrative example is developed to show how the
+package works.</p>
+<div id="getting-the-data" class="section level2">
+<h2>Getting the data</h2>
+<p>We want to do an analysis based on raster data obtained by satellite
+of the area of the municipality of Lanjarón in Granada (Spain). To cover
+this area, we have downloaded two satellite band files from the <a href="https://dataspace.copernicus.eu/"><em>ESA</em></a> website.</p>
+<ul>
+<li><code>S2A_MSIL2A_20230905T105621_N0509_R094_T30SVF_20230905T170700.zip</code>:
+0.91 GB</li>
+<li><code>S2A_MSIL2A_20230905T105621_N0509_R094_T30SVG_20230905T170700.zip</code>:
+1.14 GB</li>
+</ul>
+<p>In this case, the area is very small and requires only two files, we
+can decompress them one by one with any unzip tool. We can also use the
+<code>sat_untarzip()</code> function of the package: it decompresses all
+the indicated list of files or all the files included in the given
+folder.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">sat_untarzip</span>(<span class="st">&quot;download/esa&quot;</span>, <span class="at">out_dir =</span> <span class="st">&quot;esa&quot;</span>)</span></code></pre></div>
+<p>We have unzipped them directly into a folder (<code>esa</code>
+folder), creating two subfolders.</p>
+<p>In order to to reduce their size so they can be included in the
+package, we have additionally selected and transformed the original
+raster files, grouping them using the <code>terra::aggregate()</code>
+function with a factor of 100. The result is the following folders:</p>
+<ul>
+<li><code>esa/f</code>: 751 KB</li>
+<li><code>esa/g</code>: 842 KB</li>
+</ul>
+<p>These folders are included in the package. They directly contain all
+raster files transformed according to the previous description. We can
+access them as shown below.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;esa/f&quot;</span>, <span class="at">package =</span> <span class="st">&quot;satres&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>g <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;esa/g&quot;</span>, <span class="at">package =</span> <span class="st">&quot;satres&quot;</span>)</span></code></pre></div>
+</div>
+<div id="merging-and-classifying-data" class="section level2">
+<h2>Merging and classifying data</h2>
+<p>To merge the satellite bands corresponding to the same geographical
+area (tiles) and classify them according to their spatial resolution, we
+only have to create an object of the <code>satres</code> class. We pass
+as a parameter the folder where the files are located. We can also
+indicate a work folder as a parameter, where the virtual rasters will be
+created; if none is indicated, a temporary folder will be used.</p>
+<p>By default, only the satellite bands (<em>B01</em> to <em>B12</em>)
+are considered. By setting the <code>only_bands</code> parameter to
+<code>FALSE</code>, we can indicate that all raster files included in
+the folders that cover the area of interest are also treated, as shown
+in the code below.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>sr_all <span class="ot">&lt;-</span> <span class="fu">satres</span>(<span class="at">dir =</span> <span class="st">&quot;esa&quot;</span>, <span class="at">out_dir =</span> <span class="st">&quot;esa/out&quot;</span>, <span class="at">only_bands =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<p>For this case we only need the bands (<em>B01</em> to <em>B12</em>),
+which we then obtain from the data stored in this package.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>esa <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;esa&quot;</span>, <span class="at">package =</span> <span class="st">&quot;satres&quot;</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>sr <span class="ot">&lt;-</span> <span class="fu">satres</span>(<span class="at">dir =</span> esa)</span></code></pre></div>
+</div>
+<div id="using-the-results" class="section level2">
+<h2>Using the results</h2>
+<p>Next we consult the spatial resolution of the result (remember that
+we have changed the resolution, adding it by a factor of 100).</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>sr <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">get_spatial_resolution</span>()</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt; [1] &quot;r1000m&quot; &quot;r2000m&quot; &quot;r6000m&quot;</span></span></code></pre></div>
+<p>We obtain an object of class <code>SpatRaster</code> from the
+<code>terra</code> package with all the bands of the indicated spatial
+resolution.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>r1000m <span class="ot">&lt;-</span> sr <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">as_SpatRaster</span>(<span class="st">&quot;r1000m&quot;</span>)</span></code></pre></div>
+<p>To show the available bands, we represent them graphically below.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">plot</span>(r1000m)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>The bands are directly accessible by name (<em>B02</em>,
+<em>B03</em>, <em>B04</em> and <em>B08</em> in the figure), within each
+object obtained in the result.</p>
+<p>In the same way we can obtain the objects for the other levels of
+spatial resolution. In this case we are only going to show the names of
+the bands.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>r2000m <span class="ot">&lt;-</span> sr <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">as_SpatRaster</span>(<span class="st">&quot;r2000m&quot;</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="fu">names</span>(r2000m)</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#&gt;  [1] &quot;B01&quot; &quot;B02&quot; &quot;B03&quot; &quot;B04&quot; &quot;B05&quot; &quot;B06&quot; &quot;B07&quot; &quot;B11&quot; &quot;B12&quot; &quot;B8A&quot;</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>r6000m <span class="ot">&lt;-</span> sr <span class="sc">|&gt;</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>  <span class="fu">as_SpatRaster</span>(<span class="st">&quot;r6000m&quot;</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="fu">names</span>(r6000m)</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co">#&gt;  [1] &quot;B01&quot; &quot;B02&quot; &quot;B03&quot; &quot;B04&quot; &quot;B05&quot; &quot;B06&quot; &quot;B07&quot; &quot;B09&quot; &quot;B11&quot; &quot;B12&quot; &quot;B8A&quot;</span></span></code></pre></div>
+<p>We can save the results to disk using the functions of the
+<code>terra</code> package. But we can also save them directly using the
+<code>save_by_resolution()</code> function, which stores them with file
+names obtained based on the spatial resolution. In this example, the
+<code>only_show_files</code> parameter controls the execution of the
+function so that it only displays the file names.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>sr <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">save_by_resolution</span>(<span class="at">out_dir =</span> <span class="st">&quot;esa/out&quot;</span>, <span class="at">only_show_files =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt; [1] &quot;esa/out/r1000m.tif&quot; &quot;esa/out/r2000m.tif&quot; &quot;esa/out/r6000m.tif&quot;</span></span></code></pre></div>
+</div>
+</div>
+<div id="conclusions" class="section level1">
+<h1>Conclusions</h1>
+<p>The functions of the <code>satres</code> package make it easier to
+work with satellite rasters.</p>
+<p>Instead of accessing files individually by name, it merges files that
+form tiles from the same area and groups them according to their spatial
+resolution into one object.</p>
+<p>We can obtain objects of class <code>SpatRaster</code> and work with
+the <code>terra</code> package or we can store the result on disk to
+process it by other means.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
