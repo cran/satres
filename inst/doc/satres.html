@@ -390,10 +390,10 @@ folder.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">sat_untarzip</span>(<span class="st">&quot;download/esa&quot;</span>, <span class="at">out_dir =</span> <span class="st">&quot;esa&quot;</span>)</span></code></pre></div>
 <p>We have unzipped them directly into a folder (<code>esa</code>
 folder), creating two subfolders.</p>
-<p>In order to to reduce their size so they can be included in the
-package, we have additionally selected and transformed the original
-raster files, grouping them using the <code>terra::aggregate()</code>
-function with a factor of 100. The result is the following folders:</p>
+<p>In order to reduce their size so they can be included in the package,
+we have additionally selected and transformed the original raster files,
+grouping them using the <code>terra::aggregate()</code> function with a
+factor of 100. The result is the following folders:</p>
 <ul>
 <li><code>esa/f</code>: 751 KB</li>
 <li><code>esa/g</code>: 842 KB</li>
@@ -412,12 +412,12 @@ only have to create an object of the <code>satres</code> class. We pass
 as a parameter the folder where the files are located. We can also
 indicate a work folder as a parameter, where the virtual rasters will be
 created; if none is indicated, a temporary folder will be used.</p>
-<p>By default, only the satellite bands (<em>B01</em> to <em>B12</em>)
-are considered. By setting the <code>only_bands</code> parameter to
-<code>FALSE</code>, we can indicate that all raster files included in
-the folders that cover the area of interest are also treated, as shown
-in the code below.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>sr_all <span class="ot">&lt;-</span> <span class="fu">satres</span>(<span class="at">dir =</span> <span class="st">&quot;esa&quot;</span>, <span class="at">out_dir =</span> <span class="st">&quot;esa/out&quot;</span>, <span class="at">only_bands =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<p>By default, only the satellite spectral bands (<em>B01</em> to
+<em>B12</em>) are considered. By setting the
+<code>only_spectral_bands</code> parameter to <code>FALSE</code>, we can
+indicate that all raster files included in the folders that cover the
+area of interest are also treated, as shown in the code below.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>sr_all <span class="ot">&lt;-</span> <span class="fu">satres</span>(<span class="at">dir =</span> esa, <span class="at">only_spectral_bands =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <p>For this case we only need the bands (<em>B01</em> to <em>B12</em>),
 which we then obtain from the data stored in this package.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>esa <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;esa&quot;</span>, <span class="at">package =</span> <span class="st">&quot;satres&quot;</span>)</span>

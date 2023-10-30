@@ -15,7 +15,7 @@ f <- system.file("extdata", "esa/f", package = "satres")
 g <- system.file("extdata", "esa/g", package = "satres")
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  sr_all <- satres(dir = "esa", out_dir = "esa/out", only_bands = FALSE)
+#  sr_all <- satres(dir = esa, only_spectral_bands = FALSE)
 
 ## -----------------------------------------------------------------------------
 esa <- system.file("extdata", "esa", package = "satres")

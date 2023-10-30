@@ -1,36 +1,41 @@
 
-#' Aggregate rasters in a folder
+#' Get dimensions
 #'
-#' Select the files that correspond to the band selection. Each one is assigned
-#' the band identifier as a name.
+#' Get all dimensions in vector form to check them.
 #'
-#' @param dir A string or string vector.
-#' @param out_dir A string, output folder.
-#' @param factor A integer.
+#' @param sr A `satres` object.
 #'
 #' @return A string vector.
 #'
 #' @keywords internal
-sat_aggregate <- function(dir, out_dir, factor = 100) {
-  lf <-
-    list.files(
-      path = dir,
-      pattern = "*.TIF|.jp2",
-      recursive = TRUE,
-      full.names = TRUE
-    )
-  for (f in lf) {
-    file_name <- basename(f)
-    n <- nchar(file_name)
-    name <- substr(file_name, 1, n - 4)
-    r1 <- terra::rast(f)
-    r2 <- terra::aggregate(r1, fact = factor)
-    terra::writeRaster(r2,
-                       paste0(out_dir, file_name, '.TIF'),
-                       filetype = "GTiff",
-                       overwrite = TRUE)
+sat_dimensions <- function(sr) {
+  res <- NULL
+  for (n in names(sr$bands)) {
+    res <- c(res, n,
+             terra::ncol(sr$bands[[n]]),
+             terra::nrow(sr$bands[[n]]),
+             terra::nlyr(sr$bands[[n]]))
   }
-  lf
+  res
 }
+
+
+#' Get names
+#'
+#' Get all names in vector form to check them.
+#'
+#' @param sr A `satres` object.
+#'
+#' @return A string vector.
+#'
+#' @keywords internal
+sat_names <- function(sr) {
+  res <- NULL
+  for (n in names(sr$bands)) {
+    res <- c(res, n, names(sr$bands[[n]]))
+  }
+  res
+}
+
 
 
