@@ -1,7 +1,7 @@
-f81a3f221af3a43690077fc114172b3f *DESCRIPTION
+45969e04bd51e2dd7d193bde4030090b *DESCRIPTION
 3956fcaed814752dd60f81280e874d19 *LICENSE
 c9f155d03af44bbe70dde86e48d39fb8 *NAMESPACE
-5d21a0a2b31cac6aa9b6fbc6a605dd57 *NEWS.md
+1f27cad0cace5dadefa8a21c8e81e05b *NEWS.md
 101f965892a4eab639497b05dae81265 *R/data.R
 8d8858988faee89acc52907fffaadff0 *R/export.R
 7a4851c19ef6db8c38b3c889ec5faf55 *R/misc.R
@@ -9,8 +9,8 @@ c4ecf134c0632ff2faeec19c6b7fb732 *R/prev.R
 4c859539934bdc57b8ecdb307b7b9694 *R/satres.R
 d79fbbd1725fd3f38852f79e32c3c46c *R/sbands.R
 6d554691a00443d770a559f2a8e3044d *R/transf.R
-8501dda3795009c832446761d07f102b *README.md
-ca649f4ec84d73c899d8d60b09132223 *build/vignette.rds
+49415db53eba4169f99dcf6630aed683 *README.md
+180c16dc50ffe3f37173a5f55a6d13af *build/vignette.rds
 069c700fe114e7fd447309b2bc2f334f *data/sat_band.rda
 1f52310d7a8efa21c5c339785e04fd13 *data/sat_rest.rda
 53ee6c797acf860e7e80ee42e14333b0 *data/sat_rest_msk.rda

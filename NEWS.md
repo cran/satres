@@ -1,3 +1,7 @@
+# satres 1.1.1
+* Modify the cph field of the description.
+* Update the readme file.
+
 # satres 1.1.0
 * Transformation vignette.
 * Functions to transform an object: `clip_bands()`, `select_bands()`, `merge_tiles()`.
